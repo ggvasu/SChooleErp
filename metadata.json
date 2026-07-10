@@ -1,0 +1,6 @@
+{
+  "name": "College ERP",
+  "description": "Complete College ERP System with Google Sheets backend for Admin and Students",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
