@@ -27,110 +27,11 @@ class CollegeRepository(
 ) : BaseRepository(context, sessionManager) {
     private val tag = "CollegeRepository"
 
-    // LOCAL MOCK STATE (Used if scriptUrl is empty or network fails)
-    private val mockStudents = mutableListOf<Student>()
-    private val mockCourses = mutableListOf<Course>()
-    private val mockDepartments = mutableListOf<Department>()
-    private val mockBatches = mutableListOf<Batch>()
-    private val mockSemesters = mutableListOf<Semester>()
-    private val mockFeeAssignments = mutableListOf<FeeAssignment>()
-    private val mockPayments = mutableListOf<Payment>()
-    private val mockUsers = mutableListOf<User>()
-    private val mockNotifications = mutableListOf<NotificationItem>()
-    private val mockAuditLogs = mutableListOf<AuditLog>()
-    private val mockAttendance = mutableListOf<Attendance>()
-    private val mockAcademicPerformance = mutableListOf<AcademicPerformance>()
-
-    init {
-        seedMockData()
-    }
-
-    private fun seedMockData() {
-        // Seed Courses
-        mockCourses.addAll(listOf(
-            Course("CSE101", "B.Tech Computer Science", "4 Years", "8", "120000", "Focuses on Software Engineering and AI", "Active"),
-            Course("ECE102", "B.Tech Electronics", "4 Years", "8", "110000", "Semiconductors and Communication Systems", "Active"),
-            Course("MBA201", "MBA Finance", "2 Years", "4", "150000", "Business administration and financial models", "Active"),
-            Course("BSC301", "B.Sc Mathematics", "3 Years", "6", "60000", "Pure and Applied Mathematics", "Active")
-        ))
-
-        // Seed Departments
-        mockDepartments.addAll(listOf(
-            Department("CS", "Computer Science & Engineering", "Dr. Alan Turing", "Active"),
-            Department("EE", "Electrical & Electronics Engineering", "Dr. Nikola Tesla", "Active"),
-            Department("MGMT", "School of Management Studies", "Dr. Peter Drucker", "Active"),
-            Department("SCI", "Department of Basic Sciences", "Dr. Marie Curie", "Active")
-        ))
-
-        // Seed Batches
-        mockBatches.addAll(listOf(
-            Batch("Batch 2026", "2026-2030", "2026-08-01", "2030-06-30", "Active"),
-            Batch("Batch 2027", "2027-2031", "2027-08-01", "2031-06-30", "Active")
-        ))
-
-        // Seed Semesters
-        mockSemesters.addAll(listOf(
-            Semester("Sem/Year 1", "CSE101", "60000", "Programming in C, Physics, Calculus, Communication Skills", "Active"),
-            Semester("Sem/Year 2", "CSE101", "60000", "Data Structures, Chemistry, Linear Algebra, Environmental Sci", "Active"),
-            Semester("Sem/Year 1", "MBA201", "75000", "Microeconomics, Accounting, Stats for Managers, Org Behavior", "Active")
-        ))
-
-        // Seed Students
-        mockStudents.addAll(listOf(
-            Student("STU2026001", "REG2026402", "Jane Doe", "Female", "2005-04-12", "9876543210", "jane.doe@college.edu", "123 Academic Block, New York", "CSE101", "CS", "Sem/Year 1", "Batch 2026", "2026-06-20", "Active", "jane123"),
-            Student("STU2026002", "REG2026589", "John Smith", "Male", "2004-11-23", "8765432109", "john.smith@college.edu", "456 University Ave, Boston", "MBA201", "MGMT", "Sem/Year 1", "Batch 2026", "2026-06-21", "Active", "john123")
-        ))
-
-        // Seed Users
-        mockUsers.addAll(listOf(
-            User("admin", "admin123", "Admin", "Add,Edit,Delete,View"),
-            User("STU2026001", "jane123", "Student", "View"),
-            User("STU2026002", "john123", "Student", "View")
-        ))
-
-        // Seed Fee Assignments
-        mockFeeAssignments.addAll(listOf(
-            FeeAssignment("STU2026001", "CSE101", "Sem/Year 1", "5000", "45000", "3000", "2000", "5000", "0", "0", "5000", "0", "55000", "2026-09-15", "First semester dues"),
-            FeeAssignment("STU2026002", "MBA201", "Sem/Year 1", "10000", "60000", "4000", "3000", "0", "3000", "0", "0", "10000", "70000", "2026-09-20", "Scholarship applied")
-        ))
-
-        // Seed Payments
-        mockPayments.addAll(listOf(
-            Payment("PAY171922384", "REC0001", "STU2026001", "CSE101", "Sem/Year 1", "Tuition Fee", "35000", "0", "0", "20000", "UPI", "TXN928374928", "2026-06-25", "Partial tution payment"),
-            Payment("PAY171922395", "REC0002", "STU2026002", "MBA201", "Sem/Year 1", "Full Fee", "70000", "0", "0", "0", "Bank Transfer", "TXN102938475", "2026-06-26", "Full payment done")
-        ))
-
-        // Seed Notifications
-        mockNotifications.addAll(listOf(
-            NotificationItem("1", "Welcome to New Semester!", "The first semester classes will commence from 1st August. Please complete fee assignments.", "2026-06-25", "All"),
-            NotificationItem("2", "Independence Day Holiday", "College will remain closed on 15th August for Independence Day celebrations.", "2026-06-26", "All")
-        ))
-
-        // Seed Audit Logs
-        mockAuditLogs.add(AuditLog("2026-06-27T02:00:00Z", "System", "Initialization", "Database pre-seeded with sample records."))
-
-        // Seed Attendance
-        mockAttendance.addAll(listOf(
-            Attendance("STU2026001", "Sem/Year 1", "Programming in C", "45", "40", "88.89", "2026-06-27"),
-            Attendance("STU2026001", "Sem/Year 1", "Physics", "40", "35", "87.50", "2026-06-27"),
-            Attendance("STU2026001", "Sem/Year 1", "Calculus", "38", "30", "78.95", "2026-06-27"),
-            Attendance("STU2026002", "Sem/Year 1", "Microeconomics", "30", "28", "93.33", "2026-06-27")
-        ))
-
-        // Seed Academic Performance
-        mockAcademicPerformance.addAll(listOf(
-            AcademicPerformance("STU2026001", "Sem/Year 1", "Programming in C", "A", "85", "100", "Excellent progress"),
-            AcademicPerformance("STU2026001", "Sem/Year 1", "Physics", "B+", "78", "100", "Good"),
-            AcademicPerformance("STU2026001", "Sem/Year 1", "Calculus", "B", "72", "100", "Needs improvement in integration"),
-            AcademicPerformance("STU2026002", "Sem/Year 1", "Microeconomics", "O", "95", "100", "Outstanding")
-        ))
-    }
-
     // GENERIC POST API METHOD
     private suspend fun <T> makePostCall(action: String, request: GenericRequest, responseType: Class<T>): T? {
         val url = sessionManager.scriptUrl
         if (url.isEmpty()) {
-            Log.d(tag, "No Apps Script URL configured, running in Offline Mock mode.")
+            Log.d(tag, "No Apps Script URL configured.")
             return null
         }
         return withContext(Dispatchers.IO) {
@@ -435,27 +336,7 @@ class CollegeRepository(
         )
         val remote = makePostCall("assignFees", request, CommonResponse::class.java)
         if (remote != null) return remote
-
-        if (bulk) {
-            // Apply assignments to matching mock students
-            var count = 0
-            mockStudents.forEach { stu ->
-                val matchCourse = f.Course.isEmpty() || stu.Course == f.Course
-                val matchSem = f.Semester.isEmpty() || stu.Semester == f.Semester
-                val matchBat = bulkBatch.isEmpty() || stu.Batch == bulkBatch
-                
-                if (matchCourse && matchSem && matchBat) {
-                    mockFeeAssignments.add(f.copy(StudentID = stu.StudentID))
-                    count++
-                }
-            }
-            logAuditLocal("Admin", "Bulk Fee Assignment", "Assigned fees in bulk to $count students")
-            return CommonResponse(true, "Bulk assigned fees to $count students successfully")
-        } else {
-            mockFeeAssignments.add(f)
-            logAuditLocal("Admin", "Fee Assignment", "Assigned fees to ${f.StudentID}")
-            return CommonResponse(true, "Fees assigned successfully")
-        }
+        return CommonResponse(false, "Connection error: Failed to assign fees in Google Sheets.")
     }
 
     // PAYMENTS
@@ -625,10 +506,5 @@ class CollegeRepository(
         val remote = makePostCall("logAudit", request, CommonResponse::class.java)
         if (remote != null) return remote
         return CommonResponse(false, "Connection error: Failed to log audit event to Google Sheets.")
-    }
-
-    private fun logAuditLocal(user: String, action: String, details: String) {
-        val todayStr = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault()).format(java.util.Date())
-        mockAuditLogs.add(AuditLog(todayStr, user, action, details))
     }
 }

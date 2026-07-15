@@ -14,7 +14,7 @@ import org.json.JSONObject
 
 class LoginViewModel(application: Application) : BaseViewModel(application) {
     private val app = application as CollegeERPApplication
-    private val repository = app.repository
+    val repository = app.repository
     val sessionManager: SessionManager = app.sessionManager
 
     private val _loginSuccess = MutableStateFlow<Boolean>(false)

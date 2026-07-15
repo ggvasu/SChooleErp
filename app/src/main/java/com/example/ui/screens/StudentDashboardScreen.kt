@@ -833,7 +833,7 @@ fun StudentDashboardScreen(
         }
     }
 
-    // 3. MOCK CLEARANCE CERTIFICATE
+    // 3. LIVE CLEARANCE CERTIFICATE
     if (showCertificateDialog) {
         Dialog(onDismissRequest = { showCertificateDialog = false }) {
             Card(

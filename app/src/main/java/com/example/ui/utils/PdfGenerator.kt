@@ -14,6 +14,15 @@ import com.example.data.models.Payment
 import com.example.data.models.ReportResponse
 import java.io.File
 import java.io.FileOutputStream
+import android.print.PrintManager
+import android.print.PrintAttributes
+import android.print.PrintDocumentAdapter
+import android.os.Bundle
+import android.os.CancellationSignal
+import android.os.ParcelFileDescriptor
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
 
 object PdfGenerator {
 
@@ -280,6 +289,62 @@ object PdfGenerator {
             context.startActivity(Intent.createChooser(intent, "Share ERP PDF Document"))
         } catch (e: Exception) {
             Toast.makeText(context, "Error sharing file: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * Prints a PDF document using the standard Android PrintManager.
+     */
+    fun printPdf(context: Context, file: File) {
+        try {
+            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+            val jobName = "Receipt Document ${file.name}"
+            val printAdapter = object : PrintDocumentAdapter() {
+                override fun onLayout(
+                    oldAttributes: PrintAttributes?,
+                    newAttributes: PrintAttributes?,
+                    cancellationSignal: CancellationSignal?,
+                    callback: LayoutResultCallback?,
+                    extras: Bundle?
+                ) {
+                    if (cancellationSignal?.isCanceled == true) {
+                        callback?.onLayoutCancelled()
+                        return
+                    }
+                    val info = android.print.PrintDocumentInfo.Builder(file.name)
+                        .setContentType(android.print.PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                        .build()
+                    callback?.onLayoutFinished(info, true)
+                }
+
+                override fun onWrite(
+                    pages: Array<out android.print.PageRange>?,
+                    destination: ParcelFileDescriptor?,
+                    cancellationSignal: CancellationSignal?,
+                    callback: WriteResultCallback?
+                ) {
+                    var input: FileInputStream? = null
+                    var output: FileOutputStream? = null
+                    try {
+                        input = FileInputStream(file)
+                        output = FileOutputStream(destination?.fileDescriptor)
+                        val buf = ByteArray(1024)
+                        var bytesRead: Int
+                        while (input.read(buf).also { bytesRead = it } > 0) {
+                            output.write(buf, 0, bytesRead)
+                        }
+                        callback?.onWriteFinished(arrayOf(android.print.PageRange.ALL_PAGES))
+                    } catch (e: Exception) {
+                        callback?.onWriteFailed(e.message)
+                    } finally {
+                        try { input?.close() } catch (e: IOException) {}
+                        try { output?.close() } catch (e: IOException) {}
+                    }
+                }
+            }
+            printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
+        } catch (e: Exception) {
+            Toast.makeText(context, "Printing failed: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
